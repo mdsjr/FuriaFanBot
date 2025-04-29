@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FURIA FanBot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+      }
+      #chat-container {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .message {
+        margin: 8px;
+        padding: 8px;
+        border-radius: 8px;
+      }
+      .user {
+        background-color: #f97316;
+        align-self: flex-end;
+      }
+      .bot {
+        background-color: #4b5563;
+      }
+    </style>
+  </head>
+  <body class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-4xl font-bold mb-4">FURIA FanBot 🖤🧡</h1>
+    <p class="text-lg mb-4">
+      Converse com o bot da FURIA! Pergunte sobre jogos, notícias, torcida ou
+      suporte.
+    </p>
+    <div
+      id="chat-container"
+      class="w-full max-w-md bg-gray-800 p-4 rounded-lg mb-4"
+    ></div>
+    <div class="w-full max-w-md flex">
+      <input
+        id="message-input"
+        type="text"
+        class="flex-1 p-2 rounded-l-lg bg-gray-700 text-white"
+        placeholder="Digite sua mensagem..."
+      />
+      <button
+        onclick="sendMessage()"
+        class="p-2 bg-orange-500 text-white rounded-r-lg"
+      >
+        Enviar
+      </button>
+    </div>
+    <script>
+      async function sendMessage() {
+        const input = document.getElementById("message-input");
+        const message = input.value.trim();
+        if (!message) return;
+
+        // Adicionar mensagem do usuário
+        const chatContainer = document.getElementById("chat-container");
+        const userMessage = document.createElement("div");
+        userMessage.className = "message user";
+        userMessage.textContent = message;
+        chatContainer.appendChild(userMessage);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        input.value = "";
+
+        // Enviar mensagem ao backend
+        try {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+          });
+          const data = await response.json();
+
+          // Adicionar resposta do bot
+          const botMessage = document.createElement("div");
+          botMessage.className = "message bot";
+          botMessage.textContent = data.reply;
+          chatContainer.appendChild(botMessage);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        } catch (error) {
+          console.error("Erro ao enviar mensagem:", error);
+          const errorMessage = document.createElement("div");
+          errorMessage.className = "message bot";
+          errorMessage.textContent = "Ops, algo deu errado! Tente novamente.";
+          chatContainer.appendChild(errorMessage);
+        }
+      }
+
+      // Enviar mensagem com Enter
+      document
+        .getElementById("message-input")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") sendMessage();
+        });
+    </script>
+  </body>
+</html>
