@@ -85,5 +85,7 @@ FuriaFanBot/
 ├── package.json  
 ├── README.md
 
+**Demo**:  
+https://www.loom.com/share/690ace7adaa24b8eaa5663c47d7969bf?sid=67d90a73-1534-4bc2-a28f-a5aa899d8150  
 
 Desenvolvido com 💪 para a FURIA! #DIADEFURIA
